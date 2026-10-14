@@ -1,0 +1,7 @@
+1|Mary|Cusco
+
+2|John|Lima
+
+
+3|Peter|Arequipa
+4|Ana|Piura
