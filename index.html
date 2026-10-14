@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Elimina registros de un archivo .txt delimitado por pipes y renumera los restantes. Funciona en el navegador."
+    />
+    <title>Eliminador de líneas de archivos TXT</title>
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <h1>Eliminador de líneas de archivos TXT</h1>
+        <p class="app__intro">
+          Elimina uno o más registros de un archivo <code>.txt</code> delimitado por
+          pipes y descarga el resultado. Cada registro se lee como
+          <code>númeroDeLíneaOriginal|campo|campo</code>. Los registros que quedan se
+          renumeran desde el&nbsp;1 en <code>&lt;nombre&gt;_corrected.txt</code>; los
+          eliminados conservan su número original en
+          <code>&lt;nombre&gt;_removed.txt</code>.
+        </p>
+      </header>
+
+      <form id="process-form" class="form" novalidate>
+        <div class="field">
+          <label class="field__label" for="file-input">1. Archivo TXT</label>
+          <input
+            id="file-input"
+            class="field__control"
+            type="file"
+            accept=".txt,text/plain"
+            aria-describedby="file-help file-summary"
+          />
+          <p id="file-help" class="field__help">
+            Archivo de texto UTF-8, un registro por línea, con <code>|</code> como
+            separador.
+          </p>
+          <p id="file-summary" class="field__summary" hidden></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="line-numbers-input">
+            2. Números de línea originales a eliminar
+          </label>
+          <textarea
+            id="line-numbers-input"
+            class="field__control"
+            rows="2"
+            placeholder="2, 4, 7"
+            spellcheck="false"
+            autocapitalize="off"
+            autocomplete="off"
+            aria-describedby="line-numbers-help line-numbers-error"
+          ></textarea>
+          <p id="line-numbers-help" class="field__help">
+            Números enteros separados por comas y mayores que 0, por ejemplo
+            <code>2, 4, 7</code>. Cada número puede aparecer una sola vez.
+          </p>
+          <p id="line-numbers-error" class="field__error" role="alert" hidden></p>
+        </div>
+
+        <div class="form__actions">
+          <button id="process-button" class="button button--primary" type="submit" disabled>
+            Procesar archivo
+          </button>
+          <button id="reset-button" class="button" type="button">Limpiar</button>
+        </div>
+
+        <p id="status" class="status" role="status" aria-live="polite" hidden></p>
+      </form>
+
+      <section id="results" class="results" aria-labelledby="results-heading" hidden>
+        <h2 id="results-heading" class="results__heading" tabindex="-1">Resultado</h2>
+        <ul id="summary-list" class="summary"></ul>
+        <div class="form__actions">
+          <button
+            id="download-corrected"
+            class="button button--primary"
+            type="button"
+            data-download="corrected"
+            disabled
+          >
+            Descargar archivo corregido
+          </button>
+          <button
+            id="download-removed"
+            class="button"
+            type="button"
+            data-download="removed"
+            disabled
+          >
+            Descargar archivo de eliminados
+          </button>
+        </div>
+      </section>
+
+      <footer class="app__footer">
+        <p>
+          Tu archivo se procesa localmente en el navegador. No se sube, no se almacena y
+          no se envía a ningún servicio externo.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>

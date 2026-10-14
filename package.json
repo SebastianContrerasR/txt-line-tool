@@ -1,0 +1,19 @@
+{
+  "name": "txt-line-tool",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Browser-based tool that removes selected lines from a pipe-delimited .txt file and renumbers the remaining records.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4"
+  }
+}
