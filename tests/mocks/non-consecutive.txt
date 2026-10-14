@@ -1,0 +1,3 @@
+5|Mary|Cusco
+17|John|Lima
+900|Peter|Arequipa

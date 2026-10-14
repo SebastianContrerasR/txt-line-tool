@@ -21,6 +21,10 @@ const BOM = '\uFEFF';
  * @property {boolean} endsWithNewline Whether the file's last line ends with a
  *   line ending. The generated files mirror it, so processing a file that does
  *   not end with a newline does not add one.
+ * @property {number | null} maxLineNumber Highest original line number in the
+ *   file, or `null` when the file has no records. Original line numbers need not
+ *   be consecutive, so this is the largest first column value and not the record
+ *   count.
  */
 
 /**
@@ -51,7 +55,13 @@ export function parseInputFile(text) {
   const endsWithNewline = normalizedContent.endsWith('\n');
 
   if (normalizedContent === '') {
-    return { records: [], blankLineNumbers: [], physicalLineCount: 0, endsWithNewline };
+    return {
+      records: [],
+      blankLineNumbers: [],
+      physicalLineCount: 0,
+      endsWithNewline,
+      maxLineNumber: null,
+    };
   }
 
   const lines = normalizedContent.split('\n');
@@ -63,6 +73,7 @@ export function parseInputFile(text) {
   const records = [];
   const blankLineNumbers = [];
   const firstOccurrenceByLineNumber = new Map();
+  let maxLineNumber = null;
 
   lines.forEach((line, index) => {
     const physicalLineNumber = index + 1;
@@ -106,6 +117,12 @@ export function parseInputFile(text) {
     }
     firstOccurrenceByLineNumber.set(value, physicalLineNumber);
 
+    // Tracked while looping: spreading the records into Math.max() would blow
+    // the stack on large files.
+    if (maxLineNumber === null || value > maxLineNumber) {
+      maxLineNumber = value;
+    }
+
     records.push({
       lineNumber: value,
       raw: line,
@@ -120,5 +137,6 @@ export function parseInputFile(text) {
     blankLineNumbers,
     physicalLineCount: lines.length,
     endsWithNewline,
+    maxLineNumber,
   };
 }

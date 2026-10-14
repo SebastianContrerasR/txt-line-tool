@@ -5,6 +5,7 @@ import { buildOutputFileNames } from './core/output-file-names.js';
 import { parseInputFile } from './core/parse-input-file.js';
 import { validateLineNumbersInput } from './core/parse-line-numbers.js';
 import { processRecords } from './core/process-records.js';
+import { validateLineNumbersAgainstFile } from './core/validate-line-range.js';
 import { downloadTextFile } from './ui/download-file.js';
 import {
   clearResults,
@@ -218,15 +219,21 @@ function handleReset() {
 /**
  * Validate the line numbers field and keep the inline error in sync with it.
  *
- * @returns {number[]} The parsed numbers, or an empty array when the field is
+ * Two checks, in order: the numbers must be syntactically valid, and once a file
+ * is loaded they cannot exceed the file's highest line number.
+ *
+ * @returns {number[]} The numbers to process, or an empty array when the field is
  * empty or invalid.
  */
 function readLineNumbers() {
   const { lineNumbers, error } = validateLineNumbersInput(elements.lineNumbersInput.value);
+  const checked = error
+    ? { lineNumbers, error }
+    : validateLineNumbersAgainstFile(lineNumbers, state.parsedFile?.maxLineNumber);
 
-  setLineNumbersError(error, error !== '');
+  setLineNumbersError(checked.error, checked.error !== '');
 
-  return lineNumbers;
+  return checked.lineNumbers;
 }
 
 /**

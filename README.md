@@ -90,7 +90,9 @@ unchanged: removing every record gives back exactly the original bytes in
 | Leading zeros (`007`) | Rejected — line numbers are written without them |
 | Numbers above `Number.MAX_SAFE_INTEGER` | Rejected as unsafe |
 | Repeated number in the selection (`2,2`) | Rejected |
-| Requested number not present in the file | Reported in the summary (highlighted as *Not found in file*); the valid ones are still processed |
+| Requested number not present in the file | Reported in the summary (highlighted as *No encontrados en el archivo*); the valid ones are still processed |
+| Requested number above the file's highest line number | **Rejected before processing**: the field shows an error and the *Procesar archivo* button stays disabled. The maximum is the largest first column value, so a file numbered `5, 17, 900` accepts up to `900` |
+| Number within range but unused (gap in a non-consecutive file) | Allowed; reported in the summary after processing |
 | Blank or whitespace-only lines | Ignored, counted and reported in the summary |
 | UTF-8 BOM | Ignored |
 | LF, CRLF and lone CR | Accepted on input, always written as LF |
@@ -136,7 +138,7 @@ Vite prints the local URL (by default <http://localhost:5173>).
 npm test
 ```
 
-The suite (88 tests) lives in `tests/unit/`. It covers the pure core modules —
+The suite (119 tests) lives in `tests/unit/`. It covers the pure core modules —
 number parsing, file parsing and record processing — the sample files in
 `tests/mocks/`, plus static checks that `index.html` and `src/main.js` still agree
 on element ids, labels and live regions. No browser and no network access are
@@ -217,7 +219,8 @@ Forks need no change: the repository name is read from the environment.
 │   │   ├── parse-line-numbers.js   "2, 4, 7" -> [2, 4, 7]
 │   │   ├── parse-input-file.js      File text -> validated records
 │   │   ├── process-records.js       Records + selection -> both output files
-│   │   └── output-file-names.js     "data.txt" -> "data_corrected.txt"
+│   │   ├── output-file-names.js     "data.txt" -> "data_corrected.txt"
+│   │   └── validate-line-range.js   Reject numbers above the file's maximum
 │   └── ui/
 │       ├── render-status.js     Status/summary rendering (textContent only)
 │       └── download-file.js     Blob + object URL download

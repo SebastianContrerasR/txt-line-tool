@@ -116,6 +116,7 @@ describe('parseInputFile', () => {
       blankLineNumbers: [],
       physicalLineCount: 0,
       endsWithNewline: false,
+      maxLineNumber: null,
     });
   });
 
@@ -125,7 +126,24 @@ describe('parseInputFile', () => {
       blankLineNumbers: [],
       physicalLineCount: 0,
       endsWithNewline: false,
+      maxLineNumber: null,
     });
+  });
+
+  it('reports the highest line number of the file', () => {
+    expect(parseInputFile(SAMPLE).maxLineNumber).toBe(5);
+    expect(parseInputFile('1|A').maxLineNumber).toBe(1);
+  });
+
+  it('reports the highest value, not the record count, for non-consecutive files', () => {
+    const { records, maxLineNumber } = parseInputFile('5|a|x\n17|b|y\n900|c|z');
+
+    expect(records).toHaveLength(3);
+    expect(maxLineNumber).toBe(900);
+  });
+
+  it('reports a maximum of null for a file with only blank lines', () => {
+    expect(parseInputFile('\n\n').maxLineNumber).toBeNull();
   });
 
   it('reports whether the file ends with a newline', () => {
