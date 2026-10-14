@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { parseInputFile } from '../../src/core/parse-input-file.js';
 import { processRecords } from '../../src/core/process-records.js';
+import { validateLineNumbersAgainstFile } from '../../src/core/validate-line-range.js';
 
 /**
  * Exercises the sample files in `tests/mocks/`.
@@ -63,6 +64,28 @@ describe('tests/mocks', () => {
 
     expect(result.correctedText.endsWith('\n')).toBe(true);
     expect(result.removedText.endsWith('\n')).toBe(true);
+  });
+
+  it('reports 900 as the maximum line number of non-consecutive.txt', async () => {
+    const { maxLineNumber } = parseInputFile(await readMock('non-consecutive.txt'));
+
+    expect(maxLineNumber).toBe(900);
+  });
+
+  it('rejects numbers above 900 and accepts 500 for non-consecutive.txt', async () => {
+    const { maxLineNumber } = parseInputFile(await readMock('non-consecutive.txt'));
+
+    expect(validateLineNumbersAgainstFile([17, 901], maxLineNumber).error).toBe(
+      'El número de línea más alto del archivo es 900. Revisa: 901.',
+    );
+    // 500 has no record, but it is within range: it is reported in the summary.
+    expect(validateLineNumbersAgainstFile([500], maxLineNumber)).toEqual({
+      lineNumbers: [500],
+      error: '',
+    });
+
+    const result = await run('non-consecutive.txt', [500]);
+    expect(result.unmatchedLineNumbers).toEqual([500]);
   });
 
   it('parses edge-cases.txt, preserving empty fields, spaces and extra fields', async () => {

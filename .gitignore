@@ -23,3 +23,7 @@ Thumbs.db
 
 # Test output
 coverage/
+
+# Working documents (the specification this project was built from)
+prompt.md
+Prompt.md
